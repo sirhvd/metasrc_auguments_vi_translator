@@ -11,7 +11,7 @@
 // @grant        GM_xmlhttpRequest
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=metasrc.com
 // @homepageURL  https://github.com/sirhvd/metasrc_auguments_vi_translator
-// @downloadURL  https://raw.githubusercontent.com/sirhvd/metasrc_auguments_vi_translator/main/metasrc_auguments_vi.js
+// @downloadURL  https://raw.githubusercontent.com/sirhvd/metasrc_auguments_vi_translator/refs/heads/main/metasrc_auguments_vi.js
 // @license      MIT
 // ==/UserScript==
 
