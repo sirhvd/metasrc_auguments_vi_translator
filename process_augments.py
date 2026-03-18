@@ -28,15 +28,15 @@ def main():
             "id": aug_id,
             "vn_name": item['name'],
             "en_name": en_lookup.get(aug_id, "Unknown"),
-            "desc": item['description']
+            "desc": item['desc']
         }
         result.append(obj)
 
     # Xuất ra file JSON
-    with open('aram_augments.json', 'w', encoding='utf-8') as f:
+    with open('augments.json', 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=4)
     
-    print(f"Thành công! Đã trích xuất {len(result)} lõi vào file aram_augments.json")
+    print(f"Thành công! Đã trích xuất {len(result)} lõi vào file augments.json")
 
 if __name__ == "__main__":
     main()
