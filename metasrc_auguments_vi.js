@@ -9,6 +9,10 @@
 // @match        https://www.metasrc.com/lol/arena/tier-list/augments
 // @match        https://www.metasrc.com/lol/mayhem/tier-list/augments
 // @grant        GM_xmlhttpRequest
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=metasrc.com
+// @homepageURL  https://github.com/sirhvd/metasrc_auguments_vi_translator
+// @downloadURL  https://raw.githubusercontent.com/sirhvd/metasrc_auguments_vi_translator/main/metasrc_auguments_vi.js
+// @license      MIT
 // ==/UserScript==
 
 (function() {
