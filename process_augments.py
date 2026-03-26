@@ -44,7 +44,7 @@ def main():
             "id": aug_id,
             "vn_name": item.get('name', ''),
             "en_name": en_arena_lookup.get(aug_id, "Unknown"),
-            "desc": item.get('description', '')
+            "desc": item.get('desc', '')
         }
 
     # Bước B: Xử lý Cherry (Ưu tiên ghi đè vn_name, en_name từ nameTRA)
