@@ -2,41 +2,83 @@ import requests
 import json
 
 def fetch_json(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.json()
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Lỗi khi tải {url}: {e}")
+        return []
 
 def main():
-    url_vi = "https://raw.communitydragon.org/latest/cdragon/arena/vi_vn.json"
-    url_en = "https://raw.communitydragon.org/latest/cdragon/arena/en_us.json"
+    # 1. Các URL nguồn
+    url_arena_vi = "https://raw.communitydragon.org/latest/cdragon/arena/vi_vn.json"
+    url_arena_en = "https://raw.communitydragon.org/latest/cdragon/arena/en_us.json"
+    url_cherry_vi = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/vi_vn/v1/cherry-augments.json"
+    url_cherry_en = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/cherry-augments.json"
 
     print("Đang tải dữ liệu...")
-    data_vi = fetch_json(url_vi)
-    data_en = fetch_json(url_en)
-
-    # Tạo dictionary để tra cứu tên tiếng Anh nhanh hơn qua ID
-    en_lookup = {item['id']: item['name'] for item in data_en.get('augments', [])}
-
-    result = []
     
-    # Duyệt qua danh sách tiếng Việt để lấy tên VN và Mô tả
-    for item in data_vi.get('augments', []):
+    # 2. Fetch dữ liệu
+    arena_vi = fetch_json(url_arena_vi)
+    arena_en = fetch_json(url_arena_en)
+    cherry_vi = fetch_json(url_cherry_vi)
+    cherry_en = fetch_json(url_cherry_en)
+
+    # Xử lý format dữ liệu (Arena thường nằm trong key 'augments')
+    arena_vi_list = arena_vi.get('augments', []) if isinstance(arena_vi, dict) else []
+    arena_en_list = arena_en.get('augments', []) if isinstance(arena_en, dict) else []
+    
+    # Cherry thường là mảng trực tiếp
+    cherry_vi_list = cherry_vi if isinstance(cherry_vi, list) else cherry_vi.get('augments', [])
+    cherry_en_list = cherry_en if isinstance(cherry_en, list) else cherry_en.get('augments', [])
+
+    # 3. Logic Merge
+    # Bước A: Khởi tạo dữ liệu từ Arena (lấy desc từ đây)
+    en_arena_lookup = {item['id']: item.get('name', 'Unknown') for item in arena_en_list if 'id' in item}
+    
+    merged_data = {}
+    for item in arena_vi_list:
         aug_id = item['id']
-        
-        # Chỉ lấy nếu tồn tại ID tương ứng bên bản Anh (để tránh lỗi dữ liệu rác)
-        obj = {
+        merged_data[aug_id] = {
             "id": aug_id,
-            "vn_name": item['name'],
-            "en_name": en_lookup.get(aug_id, "Unknown"),
-            "desc": item['desc']
+            "vn_name": item.get('name', ''),
+            "en_name": en_arena_lookup.get(aug_id, "Unknown"),
+            "desc": item.get('description', '')
         }
-        result.append(obj)
 
-    # Xuất ra file JSON
+    # Bước B: Xử lý Cherry (Ưu tiên ghi đè vn_name, en_name từ nameTRA)
+    # Tạo lookup cho tiếng Anh Cherry
+    cherry_en_lookup = {item['id']: item.get('nameTRA', 'Unknown') for item in cherry_en_list if 'id' in item}
+
+    for item in cherry_vi_list:
+        aug_id = item.get('id')
+        if not aug_id: continue
+        
+        vn_name_tra = item.get('nameTRA', '')
+        en_name_tra = cherry_en_lookup.get(aug_id, 'Unknown')
+
+        if aug_id in merged_data:
+            # Nếu đã có ID (từ Arena) -> Ghi đè Tên, giữ nguyên Desc
+            if vn_name_tra:
+                merged_data[aug_id]['vn_name'] = vn_name_tra
+            if en_name_tra != 'Unknown':
+                merged_data[aug_id]['en_name'] = en_name_tra
+        else:
+            # Nếu ID mới hoàn toàn (chỉ có trong Cherry) -> Thêm mới, desc rỗng
+            merged_data[aug_id] = {
+                "id": aug_id,
+                "vn_name": vn_name_tra,
+                "en_name": en_name_tra,
+                "desc": ""
+            }
+
+    # 4. Xuất file JSON
+    final_list = list(merged_data.values())
     with open('augments.json', 'w', encoding='utf-8') as f:
-        json.dump(result, f, ensure_ascii=False, indent=4)
+        json.dump(final_list, f, ensure_ascii=False, indent=4)
     
-    print(f"Thành công! Đã trích xuất {len(result)} lõi vào file augments.json")
+    print(f"Thành công! Đã xử lý {len(final_list)} lõi.")
 
 if __name__ == "__main__":
     main()
