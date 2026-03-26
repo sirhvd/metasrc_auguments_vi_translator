@@ -26,21 +26,18 @@
 
     const JSON_URL = 'https://raw.githubusercontent.com/sirhvd/arammayhem_auguments_vi/main/augments.json';
 
-    // Helper: Chỉnh sửa text mà không làm mất cấu trúc gốc (nếu cần)
     const replaceText = (el, info) => {
         if (!el || el.dataset.translated) return;
         el.innerText = `${el.innerText} (${info.vn_name})`;
         el.dataset.translated = "true";
     };
 
-    // Khởi tạo truy xuất dữ liệu
     const fetchAugmentData = new Promise((resolve, reject) => {
         GM_xmlhttpRequest({
             method: "GET",
             url: JSON_URL,
             onload: (res) => {
                 const data = JSON.parse(res.responseText);
-                // Tối ưu bằng cách tạo Map để lookup O(1)
                 const idMap = new Map();
                 const nameMap = new Map();
 
@@ -56,9 +53,7 @@
     });
 
     const Translator = {
-        // --- LOGIC CHO METASRC ---
         metaSrc(maps) {
-            // 1. Static UI (Bảng danh sách)
             const uiSelector = 'div._je89v2-3._cn8bui div[data-tooltip^="augment-"]';
             document.querySelectorAll(uiSelector).forEach(el => {
                 const augId = Number(el.getAttribute('data-tooltip').split('-').pop());
@@ -70,7 +65,6 @@
                 }
             });
 
-            // 2. Search Dropdown
             document.querySelectorAll('#augmentSelect option').forEach(opt => {
                 const info = maps.idMap.get(Number(opt.value));
                 if (info && !opt.dataset.translated) {
@@ -79,7 +73,6 @@
                 }
             });
 
-            // 3. Tooltip Object (Sửa tận gốc data của web)
             let attempts = 0;
             const checkTooltips = setInterval(() => {
                 const tooltips = unsafeWindow.Tooltips?.tooltips;
@@ -102,7 +95,6 @@
             }, 500);
         },
 
-        // --- LOGIC CHO ARAMMAYHEM ---
         aramMayhem(maps) {
 
             GM_addStyle('.font-medium { text-wrap: auto !important; }');
@@ -127,9 +119,7 @@
         }
     };
 
-    // Thực thi
     fetchAugmentData.then(maps => {
-        // Chờ UI render nhẹ
         setTimeout(() => {
             if (location.host.includes('metasrc.com')) {
                 Translator.metaSrc(maps);
