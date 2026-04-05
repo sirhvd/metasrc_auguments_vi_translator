@@ -1320,12 +1320,6 @@
         "desc": ""
     },
     {
-        "id": 1368,
-        "vn_name": "Quá Giang",
-        "en_name": "Chauffeur",
-        "desc": ""
-    },
-    {
         "id": 1015,
         "vn_name": "Vòng Tròn Tử Thần",
         "en_name": "Circle of Death",
@@ -1629,12 +1623,6 @@
         "id": 1050,
         "vn_name": "Thầy Pháp Ngọc Bội",
         "en_name": "Keystone Conjurer",
-        "desc": ""
-    },
-    {
-        "id": 1174,
-        "vn_name": "Mắt Laser",
-        "en_name": "Laser Eyes",
         "desc": ""
     },
     {
@@ -2118,12 +2106,6 @@
         "desc": ""
     },
     {
-        "id": 1091,
-        "vn_name": "Vòng Lặp Sinh Mệnh",
-        "en_name": "Virtuous Cycle",
-        "desc": ""
-    },
-    {
         "id": 2002,
         "vn_name": "Vết Rách Hư Không",
         "en_name": "Void Rift",
@@ -2241,12 +2223,6 @@
         "id": 1333,
         "vn_name": "Kế Hoạch Đào Tẩu",
         "en_name": "Escape Plan",
-        "desc": ""
-    },
-    {
-        "id": 1374,
-        "vn_name": "Bắt Lấy",
-        "en_name": "Fetch",
         "desc": ""
     },
     {
